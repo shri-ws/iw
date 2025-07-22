@@ -1,566 +1,405 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Works - Smart Investment Solutions Coming Soon</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Calculator, TrendingUp, DollarSign, Calendar, Brain, PieChart } from 'lucide-react';
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            min-height: 100vh;
-        }
+const InvestmentCalculator = () => {
+  const [investmentType, setInvestmentType] = useState('lumpsum');
+  const [principal, setPrincipal] = useState(100000);
+  const [monthlyAmount, setMonthlyAmount] = useState(5000);
+  const [interestRate, setInterestRate] = useState(12);
+  const [timePeriod, setTimePeriod] = useState(10);
+  const [results, setResults] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [aiProjections, setAiProjections] = useState(null);
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+  const calculateInvestment = () => {
+    let yearlyData = [];
+    let totalAmount = 0;
+    let totalInvested = 0;
 
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #059669;
-        }
-
-        .whatsapp-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #25D366;
-            color: white;
-            padding: 15px;
-            border-radius: 50%;
-            text-decoration: none;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-            transition: transform 0.3s, box-shadow 0.3s;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-        }
-
-        .whatsapp-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #059669;
-        }
-
-        .hero {
-            padding: 150px 0 100px;
-            text-align: center;
-            color: white;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.9;
-        }
-
-        .cta-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 60px 0;
-            margin: -50px 20px 0;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .form-container h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .form-container p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .survey-form {
-            display: grid;
-            gap: 1.5rem;
-            text-align: left;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        label {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        input, select, textarea {
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #10b981;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            justify-self: center;
-            margin-top: 1rem;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(52, 211, 153, 0.4);
-        }
-
-        .features {
-            padding: 100px 0;
-            background: white;
-        }
-
-        .features h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .footer {
-            background: #333;
-            color: white;
-            padding: 40px 0;
-            text-align: center;
-        }
-
-        .success-message {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid #c3e6cb;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .cta-section {
-                margin: -30px 10px 0;
-                padding: 40px 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <nav class="nav container">
-            <div class="logo">Investment Works</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#survey">Share Your Wish</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section class="hero" id="home">
-        <div class="container">
-            <h1>The Future of Smart Investing</h1>
-            <p>Connect with the right investment opportunities while accessing powerful tools to make informed decisions. Join thousands of investors preparing for the next generation of investment platforms.</p>
-        </div>
-    </section>
-
-    <section class="cta-section" id="survey">
-        <div class="container">
-            <div class="form-container">
-                <h2>Share Your Investment Wish</h2>
-                <p>Help us build the investment platform you need. Share your preferences and be the first to access our revolutionary investment ecosystem.</p>
-                
-                <div class="success-message" id="successMessage">
-                    <strong>Thank you!</strong> Your information has been recorded. We'll be in touch soon with exclusive updates.
-                </div>
-
-                <form class="survey-form" id="investmentSurvey">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">First Name *</label>
-                            <input type="text" id="firstName" name="firstName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Last Name *</label>
-                            <input type="text" id="lastName" name="lastName" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="age">Age Group</label>
-                            <select id="age" name="age">
-                                <option value="">Select Age Group</option>
-                                <option value="18-25">18-25</option>
-                                <option value="26-35">26-35</option>
-                                <option value="36-45">36-45</option>
-                                <option value="46-55">46-55</option>
-                                <option value="55+">55+</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="experience">Investment Experience</label>
-                            <select id="experience" name="experience">
-                                <option value="">Select Experience Level</option>
-                                <option value="beginner">Beginner (0-2 years)</option>
-                                <option value="intermediate">Intermediate (2-5 years)</option>
-                                <option value="advanced">Advanced (5+ years)</option>
-                                <option value="professional">Professional Investor</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="investmentAmount">Typical Investment Amount</label>
-                        <select id="investmentAmount" name="investmentAmount">
-                            <option value="">Select Amount Range</option>
-                            <option value="under-1l">Under ₹1 Lakh</option>
-                            <option value="1l-5l">₹1-5 Lakhs</option>
-                            <option value="5l-10l">₹5-10 Lakhs</option>
-                            <option value="10l-25l">₹10-25 Lakhs</option>
-                            <option value="25l-50l">₹25-50 Lakhs</option>
-                            <option value="50l+">₹50+ Lakhs</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Investment Interests (Select all that apply)</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="sip" name="interests" value="sip">
-                                <label for="sip">SIP (Systematic Investment Plan)</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="mutual-funds" name="interests" value="mutual-funds">
-                                <label for="mutual-funds">Mutual Funds</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="gold-etfs" name="interests" value="gold-etfs">
-                                <label for="gold-etfs">Gold ETFs</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="govt-bonds" name="interests" value="govt-bonds">
-                                <label for="govt-bonds">Govt. Bonds</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="real-estate" name="interests" value="real-estate">
-                                <label for="real-estate">Real Estate</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="insurance" name="interests" value="insurance">
-                                <label for="insurance">Insurance</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="riskTolerance">Risk Tolerance</label>
-                        <select id="riskTolerance" name="riskTolerance">
-                            <option value="">Select Risk Level</option>
-                            <option value="conservative">Conservative (Low Risk)</option>
-                            <option value="moderate">Moderate (Medium Risk)</option>
-                            <option value="aggressive">Aggressive (High Risk)</option>
-                            <option value="very-aggressive">Very Aggressive (Very High Risk)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="goals">Investment Goals</label>
-                        <textarea id="goals" name="goals" rows="3" placeholder="What are your main investment objectives? (e.g., retirement planning, wealth building, passive income, etc.)"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="features">Most Important Platform Features</label>
-                        <textarea id="features" name="features" rows="3" placeholder="What features would you most want in an investment platform? (e.g., portfolio tracking, research tools, expert advice, etc.)"></textarea>
-                    </div>
-
-                    <button type="submit" class="submit-btn">Share My Wish</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <section class="features" id="features">
-        <div class="container">
-            <h2>What's Coming</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Advanced Analytics</h3>
-                    <p>Powerful tools to analyze market trends, track portfolio performance, and make data-driven investment decisions.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🤝</div>
-                    <h3>Investment Matching</h3>
-                    <p>Connect with investment opportunities that match your risk profile, goals, and preferences through our smart matching system.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Secure & Compliant</h3>
-                    <p>Bank-level security with full regulatory compliance to protect your investments and personal information.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Mobile First</h3>
-                    <p>Invest and manage your portfolio on the go with our intuitive mobile-first platform design.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Personalized Recommendations</h3>
-                    <p>Get investment suggestions tailored to your specific goals, timeline, and risk tolerance.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3>Educational Resources</h3>
-                    <p>Access expert insights, market research, and educational content to improve your investment knowledge.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer" id="contact">
-        <div class="container">
-            <div class="logo" style="margin-bottom: 1rem;">Investment Works</div>
-            <p>&copy; 2025 Investment Works. Building the future of smart investing.</p>
-            <p>Contact us: hello@investmentworks.in | +91-94535-61588</p>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Contact Button -->
-    <a href="https://wa.me/919453561588?text=Hi%20Investment%20Works%2C%20I%27m%20interested%20in%20your%20upcoming%20investment%20platform!" class="whatsapp-btn" target="_blank">
-        📱
-    </a>
-
-    <script>
-        // Store collected data (in a real application, this would send to your backend)
-        let collectedData = [];
-
-        document.getElementById('investmentSurvey').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Collect form data
-            const formData = new FormData(this);
-            const data = {
-                timestamp: new Date().toISOString(),
-                firstName: formData.get('firstName'),
-                lastName: formData.get('lastName'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                age: formData.get('age'),
-                experience: formData.get('experience'),
-                investmentAmount: formData.get('investmentAmount'),
-                interests: formData.getAll('interests'),
-                riskTolerance: formData.get('riskTolerance'),
-                goals: formData.get('goals'),
-                features: formData.get('features')
-            };
-
-            // Store data (in real app, send to backend)
-            collectedData.push(data);
-            
-            // Show success message
-            document.getElementById('successMessage').style.display = 'block';
-            this.reset();
-            
-            // Scroll to success message
-            document.getElementById('successMessage').scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
-
-            // Log data for demo purposes (remove in production)
-            console.log('Collected Investment Data:', data);
-            console.log('Total Responses:', collectedData.length);
-            
-            // In a real application, you would send this data to your backend:
-            // fetch('/api/collect-investment-data', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(data)
-            // });
+    if (investmentType === 'lumpsum') {
+      // Lump sum calculation
+      totalInvested = principal;
+      const monthlyRate = interestRate / 12 / 100;
+      const months = timePeriod * 12;
+      totalAmount = principal * Math.pow(1 + monthlyRate, months);
+      
+      // Generate yearly breakdown
+      for (let year = 1; year <= timePeriod; year++) {
+        const yearlyAmount = principal * Math.pow(1 + interestRate/100, year);
+        yearlyData.push({
+          year,
+          amount: Math.round(yearlyAmount),
+          invested: totalInvested,
+          gains: Math.round(yearlyAmount - totalInvested)
         });
-
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Demo function to show collected data (for development)
-        function showCollectedData() {
-            console.table(collectedData);
-            return collectedData;
+      }
+    } else {
+      // SIP calculation
+      const monthlyRate = interestRate / 12 / 100;
+      const months = timePeriod * 12;
+      totalInvested = monthlyAmount * months;
+      
+      // SIP formula: M * [((1 + r)^n - 1) / r] * (1 + r)
+      if (monthlyRate === 0) {
+        totalAmount = monthlyAmount * months;
+      } else {
+        totalAmount = monthlyAmount * (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate));
+      }
+      
+      // Generate yearly breakdown for SIP
+      let runningInvested = 0;
+      let runningAmount = 0;
+      
+      for (let year = 1; year <= timePeriod; year++) {
+        const monthsCompleted = year * 12;
+        runningInvested = monthlyAmount * monthsCompleted;
+        
+        if (monthlyRate === 0) {
+          runningAmount = runningInvested;
+        } else {
+          runningAmount = monthlyAmount * (((Math.pow(1 + monthlyRate, monthsCompleted) - 1) / monthlyRate) * (1 + monthlyRate));
         }
+        
+        yearlyData.push({
+          year,
+          amount: Math.round(runningAmount),
+          invested: runningInvested,
+          gains: Math.round(runningAmount - runningInvested)
+        });
+      }
+    }
 
-        // Make function available globally for testing
-        window.showCollectedData = showCollectedData;
-    </script>
-</body>
-</html>
+    const gains = totalAmount - totalInvested;
+    
+    setResults({
+      totalAmount: Math.round(totalAmount),
+      totalInvested: Math.round(totalInvested),
+      totalGains: Math.round(gains),
+      roi: ((gains / totalInvested) * 100).toFixed(2)
+    });
+    
+    setChartData(yearlyData);
+    generateAIProjections(totalAmount, gains, totalInvested);
+  };
+
+  const generateAIProjections = (amount, gains, invested) => {
+    // Simulate AI analysis with realistic financial projections
+    const currentROI = (gains / invested) * 100;
+    const annualROI = currentROI / timePeriod;
+    
+    const projections = {
+      riskAssessment: getRiskLevel(interestRate),
+      optimisticScenario: Math.round(amount * 1.25),
+      pessimisticScenario: Math.round(amount * 0.85),
+      inflationAdjusted: Math.round(amount / Math.pow(1.06, timePeriod)), // 6% inflation
+      recommendations: getRecommendations(interestRate, investmentType, timePeriod),
+      marketTrends: getMarketTrends(interestRate)
+    };
+    
+    setAiProjections(projections);
+  };
+
+  const getRiskLevel = (rate) => {
+    if (rate <= 6) return { level: 'Low', color: 'text-green-600', description: 'Conservative investment with stable returns' };
+    if (rate <= 12) return { level: 'Medium', color: 'text-yellow-600', description: 'Balanced risk-reward ratio' };
+    return { level: 'High', color: 'text-red-600', description: 'Aggressive growth potential with higher volatility' };
+  };
+
+  const getRecommendations = (rate, type, period) => {
+    const recs = [];
+    if (type === 'sip' && period < 5) {
+      recs.push('Consider extending investment period for better compounding benefits');
+    }
+    if (rate > 15) {
+      recs.push('High return expectations - ensure proper diversification');
+    }
+    if (rate < 8) {
+      recs.push('Consider equity exposure for inflation-beating returns');
+    }
+    return recs.length > 0 ? recs : ['Your investment strategy looks well-balanced'];
+  };
+
+  const getMarketTrends = (rate) => {
+    if (rate <= 8) return 'Suitable for debt instruments and fixed deposits';
+    if (rate <= 12) return 'Ideal for balanced mutual funds and hybrid investments';
+    return 'Aligned with equity market expectations and growth funds';
+  };
+
+  useEffect(() => {
+    calculateInvestment();
+  }, [investmentType, principal, monthlyAmount, interestRate, timePeriod]);
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Calculator className="w-10 h-10 text-indigo-600" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Smart Investment Calculator
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg">Plan your financial future with AI-powered insights</p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Input Panel */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <DollarSign className="w-6 h-6 text-indigo-600" />
+                Investment Details
+              </h2>
+
+              {/* Investment Type */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">Investment Type</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setInvestmentType('lumpsum')}
+                    className={`p-3 rounded-xl font-medium transition-all ${
+                      investmentType === 'lumpsum'
+                        ? 'bg-indigo-600 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    Lump Sum
+                  </button>
+                  <button
+                    onClick={() => setInvestmentType('sip')}
+                    className={`p-3 rounded-xl font-medium transition-all ${
+                      investmentType === 'sip'
+                        ? 'bg-indigo-600 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    SIP
+                  </button>
+                </div>
+              </div>
+
+              {/* Investment Amount */}
+              {investmentType === 'lumpsum' ? (
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Initial Investment
+                  </label>
+                  <input
+                    type="number"
+                    value={principal}
+                    onChange={(e) => setPrincipal(Number(e.target.value))}
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Enter amount"
+                  />
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Monthly Investment
+                  </label>
+                  <input
+                    type="number"
+                    value={monthlyAmount}
+                    onChange={(e) => setMonthlyAmount(Number(e.target.value))}
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="Enter monthly amount"
+                  />
+                </div>
+              )}
+
+              {/* Interest Rate */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Expected Annual Return (%)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(Number(e.target.value))}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Enter interest rate"
+                />
+                <div className="mt-2 text-xs text-gray-500">
+                  Typical ranges: FD (6-8%), Mutual Funds (10-15%), Equity (12-18%)
+                </div>
+              </div>
+
+              {/* Time Period */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Investment Period (Years)
+                </label>
+                <input
+                  type="number"
+                  value={timePeriod}
+                  onChange={(e) => setTimePeriod(Number(e.target.value))}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Enter years"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Results Panel */}
+          <div className="lg:col-span-2 space-y-8">
+            {results && (
+              <>
+                {/* Summary Cards */}
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                      <TrendingUp className="w-8 h-8 text-green-600" />
+                      <h3 className="text-lg font-bold text-gray-800">Total Value</h3>
+                    </div>
+                    <p className="text-3xl font-bold text-green-600">{formatCurrency(results.totalAmount)}</p>
+                  </div>
+                  
+                  <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                      <DollarSign className="w-8 h-8 text-blue-600" />
+                      <h3 className="text-lg font-bold text-gray-800">Total Invested</h3>
+                    </div>
+                    <p className="text-3xl font-bold text-blue-600">{formatCurrency(results.totalInvested)}</p>
+                  </div>
+                  
+                  <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                      <PieChart className="w-8 h-8 text-purple-600" />
+                      <h3 className="text-lg font-bold text-gray-800">Total Gains</h3>
+                    </div>
+                    <p className="text-3xl font-bold text-purple-600">{formatCurrency(results.totalGains)}</p>
+                    <p className="text-sm text-gray-600 mt-1">ROI: {results.roi}%</p>
+                  </div>
+                </div>
+
+                {/* Growth Chart */}
+                <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Investment Growth Over Time</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="year" stroke="#666" />
+                      <YAxis 
+                        stroke="#666"
+                        tickFormatter={(value) => `₹${(value/100000).toFixed(1)}L`}
+                      />
+                      <Tooltip 
+                        formatter={(value, name) => [formatCurrency(value), name]}
+                        labelFormatter={(label) => `Year ${label}`}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="amount" 
+                        stroke="#8b5cf6" 
+                        strokeWidth={3}
+                        name="Total Value"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="invested" 
+                        stroke="#3b82f6" 
+                        strokeWidth={2}
+                        name="Amount Invested"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="gains" 
+                        stroke="#10b981" 
+                        strokeWidth={2}
+                        name="Gains"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* AI Projections */}
+                {aiProjections && (
+                  <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Brain className="w-8 h-8 text-purple-600" />
+                      <h3 className="text-xl font-bold text-gray-800">AI-Powered Analysis</h3>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Risk Assessment */}
+                      <div className="p-4 bg-gray-50 rounded-xl">
+                        <h4 className="font-bold text-gray-800 mb-2">Risk Assessment</h4>
+                        <p className={`text-lg font-semibold ${aiProjections.riskAssessment.color}`}>
+                          {aiProjections.riskAssessment.level} Risk
+                        </p>
+                        <p className="text-sm text-gray-600">{aiProjections.riskAssessment.description}</p>
+                      </div>
+
+                      {/* Market Trends */}
+                      <div className="p-4 bg-gray-50 rounded-xl">
+                        <h4 className="font-bold text-gray-800 mb-2">Market Alignment</h4>
+                        <p className="text-sm text-gray-700">{aiProjections.marketTrends}</p>
+                      </div>
+                    </div>
+
+                    {/* Scenario Analysis */}
+                    <div className="mt-6">
+                      <h4 className="font-bold text-gray-800 mb-4">Scenario Analysis</h4>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                          <h5 className="font-semibold text-green-800">Optimistic</h5>
+                          <p className="text-2xl font-bold text-green-600">
+                            {formatCurrency(aiProjections.optimisticScenario)}
+                          </p>
+                          <p className="text-xs text-green-600">25% above expected</p>
+                        </div>
+                        
+                        <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                          <h5 className="font-semibold text-blue-800">Inflation Adjusted</h5>
+                          <p className="text-2xl font-bold text-blue-600">
+                            {formatCurrency(aiProjections.inflationAdjusted)}
+                          </p>
+                          <p className="text-xs text-blue-600">Real purchasing power</p>
+                        </div>
+                        
+                        <div className="p-4 bg-red-50 rounded-xl border border-red-200">
+                          <h5 className="font-semibold text-red-800">Conservative</h5>
+                          <p className="text-2xl font-bold text-red-600">
+                            {formatCurrency(aiProjections.pessimisticScenario)}
+                          </p>
+                          <p className="text-xs text-red-600">15% below expected</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recommendations */}
+                    <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
+                      <h4 className="font-bold text-indigo-800 mb-3">AI Recommendations</h4>
+                      <ul className="space-y-2">
+                        {aiProjections.recommendations.map((rec, index) => (
+                          <li key={index} className="text-sm text-indigo-700 flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full mt-2 flex-shrink-0"></span>
+                            {rec}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default InvestmentCalculator;
