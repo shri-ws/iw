@@ -769,12 +769,10 @@
                         </div>
                     </div>
 
-                    <!-- Chart Placeholder -->
+                    <!-- Investment Growth Chart -->
                     <div class="chart-container">
                         <h3 style="margin-bottom: 1rem;">Investment Growth Projection</h3>
-                        <div id="growth-chart" style="height: 200px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 8px; color: #666;">
-                            📈 Interactive chart showing year-by-year growth will be displayed here
-                        </div>
+                        <canvas id="growth-chart" width="800" height="300" style="max-width: 100%; height: auto;"></canvas>
                     </div>
 
                     <!-- Calculator Actions -->
@@ -1058,7 +1056,7 @@
             }
         }
 
-        // Update AI insights
+        // Update AI insights and draw chart
         function updateAIInsights(rate, years, totalValue) {
             const riskElement = document.getElementById('risk-level');
             const inflationElement = document.getElementById('inflation-value');
@@ -1094,6 +1092,207 @@
                 recommendation = 'High returns expected. Diversify to manage risk effectively';
             }
             recommendationElement.textContent = recommendation;
+            
+            // Draw the investment growth chart
+            drawGrowthChart();
+        }
+
+        // Draw investment growth chart
+        function drawGrowthChart() {
+            const canvas = document.getElementById('growth-chart');
+            const ctx = canvas.getContext('2d');
+            const rate = parseFloat(document.getElementById('rate').value) || 12;
+            const years = parseFloat(document.getElementById('years').value) || 10;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Calculate year-by-year values
+            const yearlyData = [];
+            let currentValue = 0;
+            let currentInvested = 0;
+            
+            for (let year = 0; year <= years; year++) {
+                if (currentInvestmentType === 'lumpsum') {
+                    const principal = parseFloat(document.getElementById('principal').value) || 100000;
+                    currentInvested = principal;
+                    currentValue = year === 0 ? principal : principal * Math.pow(1 + rate / 100, year);
+                } else {
+                    const monthly = parseFloat(document.getElementById('monthly').value) || 5000;
+                    const monthlyRate = rate / 100 / 12;
+                    const months = year * 12;
+                    currentInvested = monthly * months;
+                    
+                    if (year === 0) {
+                        currentValue = 0;
+                        currentInvested = 0;
+                    } else if (monthlyRate === 0) {
+                        currentValue = currentInvested;
+                    } else {
+                        currentValue = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+                    }
+                }
+                
+                yearlyData.push({
+                    year: year,
+                    invested: currentInvested,
+                    value: currentValue
+                });
+            }
+            
+            // Chart dimensions
+            const padding = 60;
+            const chartWidth = canvas.width - (padding * 2);
+            const chartHeight = canvas.height - (padding * 2);
+            
+            // Find max value for scaling
+            const maxValue = Math.max(...yearlyData.map(d => d.value));
+            const maxInvested = Math.max(...yearlyData.map(d => d.invested));
+            const chartMax = Math.max(maxValue, maxInvested) * 1.1;
+            
+            // Helper functions
+            const getX = (year) => padding + (year / years) * chartWidth;
+            const getY = (value) => padding + chartHeight - (value / chartMax) * chartHeight;
+            
+            // Set styles
+            ctx.strokeStyle = '#e1e5e9';
+            ctx.lineWidth = 1;
+            
+            // Draw grid lines
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (i / 5) * chartHeight;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(padding + chartWidth, y);
+                ctx.stroke();
+                
+                // Y-axis labels
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'right';
+                const value = (chartMax * (5 - i)) / 5;
+                ctx.fillText(formatCurrency(value), padding - 10, y + 4);
+            }
+            
+            // Draw vertical grid lines and X-axis labels
+            for (let year = 0; year <= years; year += Math.max(1, Math.floor(years / 10))) {
+                const x = getX(year);
+                ctx.strokeStyle = '#e1e5e9';
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, padding + chartHeight);
+                ctx.stroke();
+                
+                // X-axis labels
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Year ${year}`, x, padding + chartHeight + 20);
+            }
+            
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, padding + chartHeight);
+            ctx.lineTo(padding + chartWidth, padding + chartHeight);
+            ctx.stroke();
+            
+            // Draw invested amount line (blue)
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            yearlyData.forEach((point, index) => {
+                const x = getX(point.year);
+                const y = getY(point.invested);
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+            
+            // Draw total value line (green)
+            ctx.strokeStyle = '#059669';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            yearlyData.forEach((point, index) => {
+                const x = getX(point.year);
+                const y = getY(point.value);
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+            
+            // Fill area between lines (gains)
+            ctx.fillStyle = 'rgba(5, 150, 105, 0.1)';
+            ctx.beginPath();
+            yearlyData.forEach((point, index) => {
+                const x = getX(point.year);
+                const yInvested = getY(point.invested);
+                const yValue = getY(point.value);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, yInvested);
+                } else {
+                    ctx.lineTo(x, yInvested);
+                }
+            });
+            
+            // Complete the area
+            for (let i = yearlyData.length - 1; i >= 0; i--) {
+                const point = yearlyData[i];
+                const x = getX(point.year);
+                const yValue = getY(point.value);
+                ctx.lineTo(x, yValue);
+            }
+            ctx.closePath();
+            ctx.fill();
+            
+            // Add data points
+            yearlyData.forEach(point => {
+                const x = getX(point.year);
+                
+                // Invested amount point (blue)
+                ctx.fillStyle = '#3b82f6';
+                ctx.beginPath();
+                ctx.arc(x, getY(point.invested), 4, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // Total value point (green)
+                ctx.fillStyle = '#059669';
+                ctx.beginPath();
+                ctx.arc(x, getY(point.value), 4, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            // Add legend
+            const legendY = padding + chartHeight + 45;
+            
+            // Invested amount legend
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(padding, legendY, 15, 3);
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Amount Invested', padding + 25, legendY + 10);
+            
+            // Total value legend
+            ctx.fillStyle = '#059669';
+            ctx.fillRect(padding + 150, legendY, 15, 3);
+            ctx.fillStyle = '#333';
+            ctx.fillText('Total Value', padding + 175, legendY + 10);
+            
+            // Chart title
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Investment Growth Over Time', canvas.width / 2, 30);
         }
 
         // Save calculation
