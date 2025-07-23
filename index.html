@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Works - Smart Investment Solutions Coming Soon</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -91,6 +90,39 @@
             color: #059669;
         }
 
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            color: #333;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
         .hero {
             padding: 150px 0 100px;
             text-align: center;
@@ -122,194 +154,167 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
 
-        .wish-container {
-            max-width: 1200px;
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e1e5e9;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            color: #059669;
+            border-bottom-color: #059669;
+        }
+
+        .tab-btn:hover {
+            color: #059669;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Calculator Styles */
+        .calculator-container {
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        .wish-header {
-            text-align: center;
-            margin-bottom: 3rem;
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .wish-header h2 {
+        .calculator-inputs {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #e1e5e9;
+        }
+
+        .calculator-results {
+            background: linear-gradient(135deg, #059669 0%, #34d399 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #059669;
+        }
+
+        .investment-type-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .type-btn {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .type-btn.active {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .form-container h2 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
             color: #333;
         }
 
-        .wish-header p {
+        .form-container p {
             font-size: 1.1rem;
             color: #666;
-        }
-
-        /* Tab Navigation */
-        .wish-tabs {
-            display: flex;
-            justify-content: center;
             margin-bottom: 2rem;
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 5px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .wish-tab {
-            flex: 1;
-            padding: 12px 20px;
-            text-align: center;
-            background: transparent;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s;
-        }
-
-        .wish-tab.active {
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
-        }
-
-        .wish-content {
-            display: none;
-        }
-
-        .wish-content.active {
-            display: block;
-        }
-
-        /* Growth Chart Styles */
-        .chart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .chart-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .control-group label {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-size: 0.9rem;
-        }
-
-        .control-group input,
-        .control-group select {
-            padding: 10px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: border-color 0.3s;
-        }
-
-        .control-group input:focus,
-        .control-group select:focus {
-            outline: none;
-            border-color: #10b981;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 400px;
-            margin-bottom: 2rem;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .result-card {
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            border-left: 4px solid;
-        }
-
-        .result-card.optimistic {
-            background: #ecfdf5;
-            border-color: #10b981;
-        }
-
-        .result-card.realistic {
-            background: #eff6ff;
-            border-color: #3b82f6;
-        }
-
-        .result-card.pessimistic {
-            background: #fef2f2;
-            border-color: #ef4444;
-        }
-
-        .result-card h3 {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .result-card .amount {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .result-card .return {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .optimistic h3, .optimistic .amount { color: #059669; }
-        .realistic h3, .realistic .amount { color: #2563eb; }
-        .pessimistic h3, .pessimistic .amount { color: #dc2626; }
-
-        .disclaimer {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-        }
-
-        .disclaimer h4 {
-            font-weight: 600;
-            color: #92400e;
-            margin-bottom: 0.5rem;
-        }
-
-        .disclaimer p {
-            color: #92400e;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        /* Form Styles (existing) */
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
         }
 
         .survey-form {
@@ -385,6 +390,12 @@
             box-shadow: 0 10px 20px rgba(52, 211, 153, 0.4);
         }
 
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .features {
             padding: 100px 0;
             background: white;
@@ -445,35 +456,186 @@
             border: 1px solid #c3e6cb;
         }
 
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        .ai-insights {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
+            .logo {
+                font-size: 1.4rem;
             }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
+
             .nav-links {
                 display: none;
             }
-            
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 120px 0 80px;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+                line-height: 1.2;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
+
             .cta-section {
                 margin: -30px 10px 0;
-                padding: 40px 20px;
+                padding: 40px 15px;
+                border-radius: 15px;
             }
 
-            .wish-tabs {
-                flex-direction: column;
-                max-width: 300px;
+            .form-container h2 {
+                font-size: 2rem;
             }
 
-            .chart-controls {
+            .form-container p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+
+            .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .results-grid {
+            .calculator-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .calculator-inputs,
+            .calculator-results {
+                padding: 1.5rem;
+            }
+
+            .tab-navigation {
+                margin-bottom: 1.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .insight-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .result-value {
+                font-size: 1.6rem;
+            }
+
+            .whatsapp-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .form-container h2 {
+                font-size: 1.7rem;
+            }
+
+            .calculator-inputs,
+            .calculator-results {
+                padding: 1rem;
+            }
+
+            .tab-btn {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .features h2 {
+                font-size: 2rem;
+            }
+
+            .ai-insights {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .tab-btn:hover,
+            .nav-links a:hover,
+            .feature-card:hover,
+            .submit-btn:hover {
+                transform: none;
+            }
+
+            .tab-btn:active {
+                background-color: #f0f0f0;
+            }
+
+            .submit-btn:active {
+                transform: scale(0.98);
             }
         }
     </style>
@@ -484,10 +646,17 @@
             <div class="logo">Investment Works</div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
-                <li><a href="https://claude.ai/public/artifacts/18e0eacf-77b6-49cf-b2ba-82cccd67b602">Share Your Wish</a></li>
+                <li><a href="#survey">Share Your Wish</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="#home" onclick="closeMobileMenu()">Home</a>
+                <a href="#survey" onclick="closeMobileMenu()">Share Your Wish</a>
+                <a href="#features" onclick="closeMobileMenu()">Features</a>
+                <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+            </div>
         </nav>
     </header>
 
@@ -500,327 +669,231 @@
 
     <section class="cta-section" id="survey">
         <div class="container">
-            <div class="wish-container">
-                <div class="wish-header">
-                    <h2>Share Your Investment Wish</h2>
-                    <p>Explore growth potential with our AI-powered projections and share your investment preferences to help us build the perfect platform for you.</p>
-                </div>
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="switchTab('calculator')">Investment Calculator</button>
+                <button class="tab-btn" onclick="switchTab('survey')">Share Your Wish</button>
+            </div>
 
-                <!-- Tab Navigation -->
-                <div class="wish-tabs">
-                    <button class="wish-tab active" onclick="showWishTab('growth-projector')">Growth Projector</button>
-                    <button class="wish-tab" onclick="showWishTab('survey-form')">Share Your Wish</button>
-                </div>
+            <!-- Calculator Tab -->
+            <div id="calculator" class="tab-content active">
+                <div class="calculator-container">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2>Try Our Investment Calculator</h2>
+                        <p>See how your investments can grow with our smart planning tools</p>
+                    </div>
 
-                <!-- Growth Projector Tab -->
-                <div id="growth-projector" class="wish-content active">
+                    <div class="calculator-grid">
+                        <!-- Input Section -->
+                        <div class="calculator-inputs">
+                            <h3 style="margin-bottom: 1.5rem; color: #059669;">Investment Details</h3>
+                            
+                            <div class="input-group">
+                                <label>Investment Type</label>
+                                <div class="investment-type-toggle">
+                                    <button class="type-btn active" id="lumpsum-btn" onclick="setInvestmentType('lumpsum')">Lump Sum</button>
+                                    <button class="type-btn" id="sip-btn" onclick="setInvestmentType('sip')">SIP</button>
+                                </div>
+                            </div>
+
+                            <div class="input-group" id="lumpsum-input">
+                                <label for="principal">Initial Investment (₹)</label>
+                                <input type="number" id="principal" value="100000" oninput="calculateInvestment()">
+                            </div>
+
+                            <div class="input-group" id="sip-input" style="display: none;">
+                                <label for="monthly">Monthly Investment (₹)</label>
+                                <input type="number" id="monthly" value="5000" oninput="calculateInvestment()">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="rate">Expected Annual Return (%)</label>
+                                <input type="number" id="rate" value="12" step="0.1" oninput="calculateInvestment()">
+                                <small style="color: #666; font-size: 0.85rem;">FD: 6-8% | Mutual Funds: 10-15% | Equity: 12-18%</small>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="years">Investment Period (Years)</label>
+                                <input type="number" id="years" value="10" oninput="calculateInvestment()">
+                            </div>
+                        </div>
+
+                        <!-- Results Section -->
+                        <div class="calculator-results">
+                            <h3 style="margin-bottom: 1.5rem;">Your Investment Growth</h3>
+                            
+                            <div class="result-card">
+                                <div class="result-value" id="total-value">₹3,10,585</div>
+                                <div class="result-label">Total Value</div>
+                            </div>
+
+                            <div class="result-card">
+                                <div class="result-value" id="total-invested">₹1,00,000</div>
+                                <div class="result-label">Amount Invested</div>
+                            </div>
+
+                            <div class="result-card">
+                                <div class="result-value" id="total-gains">₹2,10,585</div>
+                                <div class="result-label">Total Gains</div>
+                            </div>
+
+                            <div style="margin-top: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                                <div style="font-size: 1.2rem; font-weight: bold;">ROI: <span id="roi">210.6%</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights -->
+                    <div class="ai-insights">
+                        <h3 style="margin-bottom: 1rem;">🧠 AI Investment Insights</h3>
+                        <div class="insight-grid">
+                            <div class="insight-card">
+                                <h4>Risk Level</h4>
+                                <p id="risk-level">Medium Risk - Balanced growth potential</p>
+                            </div>
+                            <div class="insight-card">
+                                <h4>Inflation Impact</h4>
+                                <p id="inflation-adjusted">Real value after 6% inflation: <span id="inflation-value">₹1,73,000</span></p>
+                            </div>
+                            <div class="insight-card">
+                                <h4>Recommendation</h4>
+                                <p id="recommendation">Consider diversifying across equity and debt for optimal returns</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Placeholder -->
                     <div class="chart-container">
-                        <h3 style="text-align: center; margin-bottom: 1.5rem; color: #333; font-size: 1.5rem;">
-                            🔮 AI-Powered Investment Growth Projector
-                        </h3>
+                        <h3 style="margin-bottom: 1rem;">Investment Growth Projection</h3>
+                        <div id="growth-chart" style="height: 200px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 8px; color: #666;">
+                            📈 Interactive chart showing year-by-year growth will be displayed here
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survey Tab -->
+            <div id="survey" class="tab-content">
+                <div class="form-container">
+                    <h2>Share Your Investment Wish</h2>
+                    <p>Help us build the investment platform you need. Share your preferences and be the first to access our revolutionary investment ecosystem.</p>
+                    
+                    <div class="success-message" id="successMessage">
+                        <strong>Thank you!</strong> Your information has been recorded. We'll be in touch soon with exclusive updates.
+                    </div>
+
+                    <div class="error-message" id="errorMessage">
+                        <strong>Error!</strong> Please check your information and try again.
+                    </div>
+
+                    <form class="survey-form" id="investmentSurvey">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="age">Age Group</label>
+                                <select id="age" name="age">
+                                    <option value="">Select Age Group</option>
+                                    <option value="18-25">18-25</option>
+                                    <option value="26-35">26-35</option>
+                                    <option value="36-45">36-45</option>
+                                    <option value="46-55">46-55</option>
+                                    <option value="55+">55+</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="experience">Investment Experience</label>
+                                <select id="experience" name="experience">
+                                    <option value="">Select Experience Level</option>
+                                    <option value="beginner">Beginner (0-2 years)</option>
+                                    <option value="intermediate">Intermediate (2-5 years)</option>
+                                    <option value="advanced">Advanced (5+ years)</option>
+                                    <option value="professional">Professional Investor</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="investmentAmount">Typical Investment Amount</label>
+                            <select id="investmentAmount" name="investmentAmount">
+                                <option value="">Select Amount Range</option>
+                                <option value="under-1l">Under ₹1 Lakh</option>
+                                <option value="1l-5l">₹1-5 Lakhs</option>
+                                <option value="5l-10l">₹5-10 Lakhs</option>
+                                <option value="10l-25l">₹10-25 Lakhs</option>
+                                <option value="25l-50l">₹25-50 Lakhs</option>
+                                <option value="50l+">₹50+ Lakhs</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Investment Interests (Select all that apply)</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="sip" name="interests" value="sip">
+                                    <label for="sip">SIP (Systematic Investment Plan)</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="mutual-funds" name="interests" value="mutual-funds">
+                                    <label for="mutual-funds">Mutual Funds</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="gold-etfs" name="interests" value="gold-etfs">
+                                    <label for="gold-etfs">Gold ETFs</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="govt-bonds" name="interests" value="govt-bonds">
+                                    <label for="govt-bonds">Govt. Bonds</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="real-estate" name="interests" value="real-estate">
+                                    <label for="real-estate">Real Estate</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="insurance" name="interests" value="insurance">
+                                    <label for="insurance">Insurance</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="riskTolerance">Risk Tolerance</label>
+                            <select id="riskTolerance" name="riskTolerance">
+                                <option value="">Select Risk Level</option>
+                                <option value="conservative">Conservative (Low Risk)</option>
+                                <option value="moderate">Moderate (Medium Risk)</option>
+                                <option value="aggressive">Aggressive (High Risk)</option>
+                                <option value="very-aggressive">Very Aggressive (Very High Risk)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goals">Investment Goals</label>
+                            <textarea id="goals" name="goals" rows="3" placeholder="What are your main investment objectives? (e.g., retirement planning, wealth building, passive income, etc.)"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="features">Most Important Platform Features</label>
+                            <textarea id="features" name="features" rows="3" placeholder="What features would you most want in an investment platform? (e.g., portfolio tracking, research tools, expert advice, etc.)"></textarea>
+                        </div>
                         
-                        <div class="chart-controls">
-                            <div class="control-group">
-                                <label>💰 Investment Amount (₹)</label>
-                                <input type="number" id="investmentAmount" value="100000" min="1000" step="1000" onchange="updateChart()">
-                            </div>
-                            <div class="control-group">
-                                <label>📅 Investment Period (Years)</label>
-                                <input type="number" id="tenure" value="10" min="1" max="30" onchange="updateChart()">
-                            </div>
-                            <div class="control-group">
-                                <label>🎯 Risk Profile</label>
-                                <select id="riskProfile" onchange="updateChart()">
-                                    <option value="conservative">Conservative</option>
-                                    <option value="moderate" selected>Moderate</option>
-                                    <option value="aggressive">Aggressive</option>
-                                </select>
-                            </div>
-                            <div class="control-group">
-                                <label>📈 Investment Type</label>
-                                <select id="investmentType" onchange="updateChart()">
-                                    <option value="equity" selected>Equity Funds</option>
-                                    <option value="debt">Debt Funds</option>
-                                    <option value="hybrid">Hybrid Funds</option>
-                                    <option value="gold">Gold</option>
-                                    <option value="crypto">Cryptocurrency</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="chart-wrapper">
-                            <canvas id="growthChart"></canvas>
-                        </div>
-
-                        <div class="results-grid">
-                            <div class="result-card optimistic">
-                                <h3>🚀 Optimistic Scenario</h3>
-                                <div class="amount" id="optimisticAmount">₹0</div>
-                                <div class="return" id="optimisticReturn">0% returns</div>
-                            </div>
-                            <div class="result-card realistic">
-                                <h3>📊 Realistic Scenario</h3>
-                                <div class="amount" id="realisticAmount">₹0</div>
-                                <div class="return" id="realisticReturn">0% returns</div>
-                            </div>
-                            <div class="result-card pessimistic">
-                                <h3>📉 Pessimistic Scenario</h3>
-                                <div class="amount" id="pessimisticAmount">₹0</div>
-                                <div class="return" id="pessimisticReturn">0% returns</div>
-                            </div>
-                        </div>
-
-                        <div class="disclaimer">
-                            <h4>⚠️ Investment Disclaimer</h4>
-                            <p>These projections are AI-generated estimates based on historical data and market simulations. Actual returns may vary significantly due to market volatility, economic conditions, and other factors. Past performance does not guarantee future results. Please consult with a financial advisor before making investment decisions.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Survey Form Tab -->
-                <div id="survey-form" class="wish-content">
-                    <div class="form-container">
-                        <div class="success-message" id="successMessage">
-                            <strong>Thank you!</strong> Your information has been recorded. We'll be in touch soon with exclusive updates.
-                        </div>
-
-                        <form class="survey-form" id="investmentSurvey">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="firstName">First Name *</label>
-                                    <input type="text" id="firstName" name="firstName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Last Name *</label>
-                                    <input type="text" id="lastName" name="lastName" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="email">Email Address *</label>
-                                    <input type="email" id="email" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="tel" id="phone" name="phone">
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="age">Age Group</label>
-                                    <select id="age" name="age">
-                                        <option value="">Select Age Group</option>
-                                        <option value="18-25">18-25</option>
-                                        <option value="26-35">26-35</option>
-                                        <option value="36-45">36-45</option>
-                                        <option value="46-55">46-55</option>
-                                        <option value="55+">55+</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="experience">Investment Experience</label>
-                                    <select id="experience" name="experience">
-                                        <option value="">Select Experience Level</option>
-                                        <option value="beginner">Beginner (0-2 years)</option>
-                                        <option value="intermediate">Intermediate (2-5 years)</option>
-                                        <option value="advanced">Advanced (5+ years)</option>
-                                        <option value="professional">Professional Investor</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="investmentAmount">Typical Investment Amount</label>
-                                <select id="investmentAmount" name="investmentAmount">
-                                    <option value="">Select Amount Range</option>
-                                    <option value="under-1l">Under ₹1 Lakh</option>
-                                    <option value="1l-5l">₹1-5 Lakhs</option>
-                                    <option value="5l-10l">₹5-10 Lakhs</option>
-                                    <option value="10l-25l">₹10-25 Lakhs</option>
-                                    <option value="25l-50l">₹25-50 Lakhs</option>
-                                    <option value="50l+">₹50+ Lakhs</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Investment Interests (Select all that apply)</label>
-                                <div class="checkbox-group">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="sip" name="interests" value="sip">
-                                        <label for="sip">SIP (Systematic Investment Plan)</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="mutual-funds" name="interests" value="mutual-funds">
-                                        <label for="mutual-funds">Mutual Funds</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="gold-etfs" name="interests" value="gold-etfs">
-                                        <label for="gold-etfs">Gold ETFs</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="govt-bonds" name="interests" value="govt-bonds">
-                                        <label for="govt-bonds">Govt. Bonds</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="real-estate" name="interests" value="real-estate">
-                                        <label for="real-estate">Real Estate</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="insurance" name="interests" value="insurance">
-                                        <label for="insurance">Insurance</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="riskTolerance">Risk Tolerance</label>
-                                <select id="riskTolerance" name="riskTolerance">
-                                    <option value="">Select Risk Level</option>
-                                    <option value="conservative">Conservative (Low Risk)</option>
-                                    <option value="moderate">Moderate (Medium Risk)</option>
-                                    <option value="aggressive">Aggressive (High Risk)</option>
-                                    <option value="very-aggressive">Very Aggressive (Very High Risk)</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="goals">Investment Goals</label>
-                                <textarea id="goals" name="goals" rows="3" placeholder="What are your main investment objectives? (e.g., retirement planning, wealth building, passive income, etc.)"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="features">Most Important Platform Features</label>
-                                <textarea id="features" name="features" rows="3" placeholder="What features would you most want in an investment platform? (e.g., portfolio tracking, research tools, expert advice, etc.)"></textarea>
-                            </div>
-
-                            <button type="submit" class="submit-btn">Share My Wish</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="features" id="features">
-        <div class="container">
-            <h2>What's Coming</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Advanced Analytics</h3>
-                    <p>Powerful tools to analyze market trends, track portfolio performance, and make data-driven investment decisions.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🤝</div>
-                    <h3>Investment Matching</h3>
-                    <p>Connect with investment opportunities that match your risk profile, goals, and preferences through our smart matching system.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Secure & Compliant</h3>
-                    <p>Bank-level security with full regulatory compliance to protect your investments and personal information.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Mobile First</h3>
-                    <p>Invest and manage your portfolio on the go with our intuitive mobile-first platform design.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Personalized Recommendations</h3>
-                    <p>Get investment suggestions tailored to your specific goals, timeline, and risk tolerance.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📚</div>
-                    <h3>Educational Resources</h3>
-                    <p>Access expert insights, market research, and educational content to improve your investment knowledge.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer" id="contact">
-        <div class="container">
-            <div class="logo" style="margin-bottom: 1rem;">Investment Works</div>
-            <p>&copy; 2025 Investment Works. Building the future of smart investing.</p>
-            <p>Contact us: hello@investmentworks.in | +91-94535-61588</p>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Contact Button -->
-    <a href="https://wa.me/919453561588?text=Hi%20Investment%20Works%2C%20I%27m%20interested%20in%20your%20upcoming%20investment%20platform!" class="whatsapp-btn" target="_blank">
-        📱
-    </a>
-
-    <script>
-        // Investment configurations
-        const investmentTypes = {
-            equity: { name: 'Equity Funds', baseReturn: 12, volatility: 0.15, color: '#3b82f6' },
-            debt: { name: 'Debt Funds', baseReturn: 7, volatility: 0.05, color: '#10b981' },
-            hybrid: { name: 'Hybrid Funds', baseReturn: 9.5, volatility: 0.10, color: '#f59e0b' },
-            gold: { name: 'Gold', baseReturn: 8, volatility: 0.12, color: '#fbbf24' },
-            crypto: { name: 'Cryptocurrency', baseReturn: 15, volatility: 0.35, color: '#8b5cf6' }
-        };
-
-        const riskProfiles = {
-            conservative: { multiplier: 0.8, volatilityAdjust: 0.7 },
-            moderate: { multiplier: 1.0, volatilityAdjust: 1.0 },
-            aggressive: { multiplier: 1.2, volatilityAdjust: 1.3 }
-        };
-
-        let growthChart = null;
-        let collectedData = [];
-
-        // Tab switching functionality
-        function showWishTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.wish-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.wish-tab').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-
-            // Initialize chart if growth projector tab is selected
-            if (tabName === 'growth-projector' && !growthChart) {
-                setTimeout(initializeChart, 100);
-            }
-        }
-
-        // Initialize the growth chart
-        function initializeChart() {
-            const ctx = document.getElementById('growthChart').getContext('2d');
-            
-            growthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: 'Optimistic Scenario',
-                            data: [],
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                            borderWidth: 3
-                        },
-                        {
-                            label: 'Realistic Scenario',
-                            data: [],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                            borderWidth: 4
-                        },
-                        {
-                            label: 'Pessimistic Scenario',
-                            data: [],
-                            borderColor: '#ef4444',
