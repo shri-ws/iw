@@ -967,13 +967,16 @@
     </footer>
 
     <!-- WhatsApp Button -->
-    <a href="https://wa.me/+91XXXXXXXXXX" class="whatsapp-btn" target="_blank">
+    <a href="https://wa.me/+919876543210?text=Hello! I'm interested in investment advice from Investment Works. Please contact me for expert consultation." class="whatsapp-btn" target="_blank">
         💬
     </a>
 
     <script>
         // Global variables
         let currentInvestmentType = 'lumpsum';
+        
+        // Google Sheets integration URL - Replace with your actual Google Apps Script URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
         // Tab switching functionality
         function switchTab(tabName) {
@@ -1295,7 +1298,7 @@
             ctx.fillText('Investment Growth Over Time', canvas.width / 2, 30);
         }
 
-        // Save calculation
+        // Save calculation and share via WhatsApp
         function saveCalculation() {
             const calculationData = {
                 type: currentInvestmentType,
@@ -1305,17 +1308,46 @@
                 years: document.getElementById('years').value,
                 totalValue: document.getElementById('total-value').textContent,
                 totalGains: document.getElementById('total-gains').textContent,
+                roi: document.getElementById('roi').textContent,
                 timestamp: new Date().toISOString()
             };
             
-            // Store in local memory (since localStorage isn't supported)
+            // Create WhatsApp message
+            const investmentType = currentInvestmentType === 'lumpsum' ? 'Lump Sum' : 'SIP';
+            const amount = currentInvestmentType === 'lumpsum' 
+                ? `₹${parseFloat(document.getElementById('principal').value).toLocaleString('en-IN')}`
+                : `₹${parseFloat(document.getElementById('monthly').value).toLocaleString('en-IN')}/month`;
+            
+            const message = `🎯 *Investment Calculation Request*
+            
+📊 *Investment Details:*
+• Type: ${investmentType}
+• Amount: ${amount}
+• Expected Return: ${calculationData.rate}% annually
+• Period: ${calculationData.years} years
+
+💰 *Projected Results:*
+• Total Value: ${calculationData.totalValue}
+• Total Gains: ${calculationData.totalGains}
+• ROI: ${calculationData.roi}
+
+🤝 *Request:* Please call me back within 24 hours for expert investment advice and personalized portfolio recommendations.
+
+Thank you!`;
+
+            // WhatsApp share with your business number
+            const phoneNumber = "+919453561588"; // Replace with your actual WhatsApp business number
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            
+            // Store calculation data
             window.savedCalculations = window.savedCalculations || [];
             window.savedCalculations.push(calculationData);
             
-            alert('Calculation saved! Our investment experts will contact you within 24 hours with personalized advice based on your calculation.');
+            // Open WhatsApp
+            window.open(whatsappURL, '_blank');
             
-            // Could integrate with email service or CRM here
-            console.log('Saved calculation:', calculationData);
+            // Show confirmation
+            alert('Opening WhatsApp to share your calculation. Our investment experts will contact you within 24 hours!');
         }
 
         // Mobile menu functions
@@ -1329,9 +1361,37 @@
             mobileMenu.classList.remove('active');
         }
 
-        // Form submission
-        document.getElementById('investmentSurvey').addEventListener('submit', function(e) {
+        // Google Sheets integration
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKmhVVU_3r8RUuQI1KumZ0AyiRxqqzf78eZBC6CAIVmx0H5LW-PHjDTJLxzYyM_g/exec'; // Replace with your Google Apps Script URL
+
+        // Submit data to Google Sheets
+        async function submitToGoogleSheets(data) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                return true;
+            } catch (error) {
+                console.error('Error submitting to Google Sheets:', error);
+                return false;
+            }
+        }
+
+        // Form submission with Google Sheets integration
+        document.getElementById('investmentSurvey').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = '📤 Submitting...';
             
             const formData = new FormData(e.target);
             const data = {};
@@ -1354,31 +1414,106 @@
             document.querySelectorAll('input[name="interests"]:checked').forEach(checkbox => {
                 interests.push(checkbox.value);
             });
-            data.interests = interests;
+            data.interests = interests.join(', ');
             
             // Add timestamp
-            data.timestamp = new Date().toISOString();
+            data.timestamp = new Date().toLocaleString('en-IN');
+            data.submissionDate = new Date().toISOString().split('T')[0];
             
-            // Store data (in real app, this would be sent to server)
-            window.surveyData = window.surveyData || [];
-            window.surveyData.push(data);
+            // Prepare data for Google Sheets (flat structure)
+            const sheetData = {
+                timestamp: data.timestamp,
+                submissionDate: data.submissionDate,
+                firstName: data.firstName || '',
+                lastName: data.lastName || '',
+                email: data.email || '',
+                phone: data.phone || '',
+                age: data.age || '',
+                experience: data.experience || '',
+                investmentAmount: data.investmentAmount || '',
+                interests: data.interests || '',
+                riskTolerance: data.riskTolerance || '',
+                goals: data.goals || '',
+                features: data.features || ''
+            };
             
-            // Show success message
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            
-            // Reset form
-            e.target.reset();
-            
-            // Scroll to success message
-            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-            
-            console.log('Survey data saved:', data);
-            
-            // Hide success message after 5 seconds
-            setTimeout(() => {
+            try {
+                // Submit to Google Sheets
+                const success = await submitToGoogleSheets(sheetData);
+                
+                if (success) {
+                    // Store data locally as backup
+                    window.surveyData = window.surveyData || [];
+                    window.surveyData.push(data);
+                    
+                    // Show success message
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('errorMessage').style.display = 'none';
+                    
+                    // Reset form
+                    e.target.reset();
+                    
+                    // Scroll to success message
+                    document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+                    
+                    console.log('Survey data saved:', data);
+                    
+                    // Create WhatsApp message for follow-up
+                    const whatsappMessage = `🎯 *New Investment Inquiry*
+
+👤 *Client Details:*
+• Name: ${data.firstName} ${data.lastName}
+• Email: ${data.email}
+• Phone: ${data.phone || 'Not provided'}
+
+💼 *Investment Profile:*
+• Experience: ${data.experience || 'Not specified'}
+• Investment Range: ${data.investmentAmount || 'Not specified'}
+• Risk Tolerance: ${data.riskTolerance || 'Not specified'}
+• Interests: ${data.interests || 'None selected'}
+
+🎯 *Goals:* ${data.goals || 'Not specified'}
+
+📋 *Preferred Features:* ${data.features || 'Not specified'}
+
+⏰ *Submitted:* ${data.timestamp}
+
+📞 *Action Required:* Please call back within 24 hours for consultation.`;
+
+                    // Add WhatsApp notification button (optional)
+                    setTimeout(() => {
+                        if (confirm('📱 Would you like to send a notification to our investment team via WhatsApp for faster response?')) {
+                            const phoneNumber = "+919876543210"; // Replace with your business WhatsApp number
+                            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+                            window.open(whatsappURL, '_blank');
+                        }
+                    }, 2000);
+                    
+                    // Hide success message after 8 seconds
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 8000);
+                    
+                } else {
+                    throw new Error('Failed to submit to Google Sheets');
+                }
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                
+                // Show error message
+                document.getElementById('errorMessage').style.display = 'block';
                 document.getElementById('successMessage').style.display = 'none';
-            }, 5000);
+                
+                // Hide error message after 5 seconds
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 5000);
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
 
         // Smooth scrolling for navigation links
