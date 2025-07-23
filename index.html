@@ -488,6 +488,13 @@
             backdrop-filter: blur(10px);
         }
 
+        .calculator-actions {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e1e5e9;
+        }
+
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             .logo {
@@ -769,11 +776,21 @@
                             📈 Interactive chart showing year-by-year growth will be displayed here
                         </div>
                     </div>
+
+                    <!-- Calculator Actions -->
+                    <div class="calculator-actions">
+                        <button class="submit-btn" onclick="saveCalculation()">
+                            💾 Save Calculation & Get Expert Advice
+                        </button>
+                        <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
+                            Save your calculation and connect with our investment experts for personalized advice
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <!-- Survey Tab -->
-            <div id="survey" class="tab-content">
+            <div id="survey-tab" class="tab-content">
                 <div class="form-container">
                     <h2>Share Your Investment Wish</h2>
                     <p>Help us build the investment platform you need. Share your preferences and be the first to access our revolutionary investment ecosystem.</p>
@@ -896,3 +913,314 @@
                             <label for="features">Most Important Platform Features</label>
                             <textarea id="features" name="features" rows="3" placeholder="What features would you most want in an investment platform? (e.g., portfolio tracking, research tools, expert advice, etc.)"></textarea>
                         </div>
+
+                        <button type="submit" class="submit-btn">
+                            🚀 Submit My Investment Wish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Why Choose Investment Works</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Smart Portfolio Management</h3>
+                    <p>AI-powered portfolio optimization that adapts to market conditions and your risk profile for maximum returns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Advanced Analytics</h3>
+                    <p>Real-time market insights, performance tracking, and detailed analytics to make informed investment decisions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Bank-Grade Security</h3>
+                    <p>Your investments and personal data are protected with enterprise-level security and encryption.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Expert Guidance</h3>
+                    <p>Access to certified financial advisors and investment experts for personalized guidance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile-First Experience</h3>
+                    <p>Seamless investment management on-the-go with our intuitive mobile application.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Educational Resources</h3>
+                    <p>Comprehensive learning materials to help you understand markets and improve your investment skills.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" id="contact">
+        <div class="container">
+            <p>&copy; 2025 Investment Works. All rights reserved. | Building the future of smart investing.</p>
+            <p>Contact us: info@investmentworks.com | +91-XXXX-XXXXX</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/+91XXXXXXXXXX" class="whatsapp-btn" target="_blank">
+        💬
+    </a>
+
+    <script>
+        // Global variables
+        let currentInvestmentType = 'lumpsum';
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Show corresponding content
+            if (tabName === 'calculator') {
+                document.getElementById('calculator').classList.add('active');
+            } else if (tabName === 'survey') {
+                document.getElementById('survey-tab').classList.add('active');
+            }
+        }
+
+        // Investment type toggle
+        function setInvestmentType(type) {
+            currentInvestmentType = type;
+            
+            // Update button states
+            document.getElementById('lumpsum-btn').classList.toggle('active', type === 'lumpsum');
+            document.getElementById('sip-btn').classList.toggle('active', type === 'sip');
+            
+            // Show/hide appropriate input fields
+            document.getElementById('lumpsum-input').style.display = type === 'lumpsum' ? 'block' : 'none';
+            document.getElementById('sip-input').style.display = type === 'sip' ? 'block' : 'none';
+            
+            // Recalculate
+            calculateInvestment();
+        }
+
+        // Investment calculator
+        function calculateInvestment() {
+            const rate = parseFloat(document.getElementById('rate').value) || 12;
+            const years = parseFloat(document.getElementById('years').value) || 10;
+            
+            let totalValue, totalInvested, totalGains;
+            
+            if (currentInvestmentType === 'lumpsum') {
+                const principal = parseFloat(document.getElementById('principal').value) || 100000;
+                totalInvested = principal;
+                totalValue = principal * Math.pow(1 + rate / 100, years);
+            } else {
+                const monthly = parseFloat(document.getElementById('monthly').value) || 5000;
+                const monthlyRate = rate / 100 / 12;
+                const months = years * 12;
+                totalInvested = monthly * months;
+                
+                if (monthlyRate === 0) {
+                    totalValue = totalInvested;
+                } else {
+                    totalValue = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+                }
+            }
+            
+            totalGains = totalValue - totalInvested;
+            const roi = (totalGains / totalInvested) * 100;
+            
+            // Update display
+            document.getElementById('total-value').textContent = formatCurrency(totalValue);
+            document.getElementById('total-invested').textContent = formatCurrency(totalInvested);
+            document.getElementById('total-gains').textContent = formatCurrency(totalGains);
+            document.getElementById('roi').textContent = roi.toFixed(1) + '%';
+            
+            // Update AI insights
+            updateAIInsights(rate, years, totalValue);
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (amount >= 10000000) {
+                return '₹' + (amount / 10000000).toFixed(1) + ' Cr';
+            } else if (amount >= 100000) {
+                return '₹' + (amount / 100000).toFixed(1) + ' L';
+            } else {
+                return '₹' + amount.toLocaleString('en-IN');
+            }
+        }
+
+        // Update AI insights
+        function updateAIInsights(rate, years, totalValue) {
+            const riskElement = document.getElementById('risk-level');
+            const inflationElement = document.getElementById('inflation-value');
+            const recommendationElement = document.getElementById('recommendation');
+            
+            // Risk assessment
+            let riskLevel = '';
+            if (rate <= 8) {
+                riskLevel = 'Low Risk - Conservative approach with stable returns';
+            } else if (rate <= 12) {
+                riskLevel = 'Medium Risk - Balanced growth potential';
+            } else if (rate <= 16) {
+                riskLevel = 'High Risk - Aggressive growth strategy';
+            } else {
+                riskLevel = 'Very High Risk - Speculative investments';
+            }
+            riskElement.textContent = riskLevel;
+            
+            // Inflation adjustment (assuming 6% inflation)
+            const inflationRate = 6;
+            const realValue = totalValue / Math.pow(1 + inflationRate / 100, years);
+            inflationElement.textContent = formatCurrency(realValue);
+            
+            // Recommendations
+            let recommendation = '';
+            if (rate <= 8) {
+                recommendation = 'Consider adding equity exposure for better long-term growth';
+            } else if (rate <= 12) {
+                recommendation = 'Well-balanced approach. Consider SIP for rupee cost averaging';
+            } else if (rate <= 16) {
+                recommendation = 'Good growth potential. Ensure emergency fund is in place';
+            } else {
+                recommendation = 'High returns expected. Diversify to manage risk effectively';
+            }
+            recommendationElement.textContent = recommendation;
+        }
+
+        // Save calculation
+        function saveCalculation() {
+            const calculationData = {
+                type: currentInvestmentType,
+                principal: document.getElementById('principal').value,
+                monthly: document.getElementById('monthly').value,
+                rate: document.getElementById('rate').value,
+                years: document.getElementById('years').value,
+                totalValue: document.getElementById('total-value').textContent,
+                totalGains: document.getElementById('total-gains').textContent,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Store in local memory (since localStorage isn't supported)
+            window.savedCalculations = window.savedCalculations || [];
+            window.savedCalculations.push(calculationData);
+            
+            alert('Calculation saved! Our investment experts will contact you within 24 hours with personalized advice based on your calculation.');
+            
+            // Could integrate with email service or CRM here
+            console.log('Saved calculation:', calculationData);
+        }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.remove('active');
+        }
+
+        // Form submission
+        document.getElementById('investmentSurvey').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {};
+            
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Get selected interests
+            const interests = [];
+            document.querySelectorAll('input[name="interests"]:checked').forEach(checkbox => {
+                interests.push(checkbox.value);
+            });
+            data.interests = interests;
+            
+            // Add timestamp
+            data.timestamp = new Date().toISOString();
+            
+            // Store data (in real app, this would be sent to server)
+            window.surveyData = window.surveyData || [];
+            window.surveyData.push(data);
+            
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Reset form
+            e.target.reset();
+            
+            // Scroll to success message
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+            
+            console.log('Survey data saved:', data);
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize calculator on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateInvestment();
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Add loading states for form submission
+        function showLoading(button) {
+            button.disabled = true;
+            button.textContent = 'Submitting...';
+        }
+
+        function hideLoading(button, originalText) {
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    </script>
+</body>
+</html>
