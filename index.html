@@ -784,7 +784,7 @@
                     <!-- Investment Growth Chart -->
                     <div class="chart-container">
                         <h3 style="margin-bottom: 1rem;">Investment Growth Projection</h3>
-                        <div id="growth-chart" width="800" height="300" style="max-width: 100%; height: auto;"></canvas>
+                        <canvas id="growth-chart" width="800" height="300" style="max-width: 100%; height: auto;"></canvas>
                     </div>
                 </div>
             </div>
@@ -982,6 +982,8 @@
 
         // Tab switching functionality
         function switchTab(tabName) {
+            console.log('Switching to tab:', tabName); // Debug log
+            
             // Remove active class from all tabs and content
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -995,59 +997,111 @@
             } else if (tabName === 'survey') {
                 document.getElementById('survey-tab').classList.add('active');
             }
+            
+            console.log('Tab switched successfully'); // Debug log
         }
 
         // Investment type toggle
         function setInvestmentType(type) {
+            console.log('Setting investment type:', type); // Debug log
+            
             currentInvestmentType = type;
             
             // Update button states
-            document.getElementById('lumpsum-btn').classList.toggle('active', type === 'lumpsum');
-            document.getElementById('sip-btn').classList.toggle('active', type === 'sip');
+            const lumpsumBtn = document.getElementById('lumpsum-btn');
+            const sipBtn = document.getElementById('sip-btn');
             
-            // Show/hide appropriate input fields
-            document.getElementById('lumpsum-input').style.display = type === 'lumpsum' ? 'block' : 'none';
-            document.getElementById('sip-input').style.display = type === 'sip' ? 'block' : 'none';
-            
-            // Recalculate
-            calculateInvestment();
+            if (lumpsumBtn && sipBtn) {
+                lumpsumBtn.classList.toggle('active', type === 'lumpsum');
+                sipBtn.classList.toggle('active', type === 'sip');
+                
+                // Show/hide appropriate input fields
+                const lumpsumInput = document.getElementById('lumpsum-input');
+                const sipInput = document.getElementById('sip-input');
+                
+                if (lumpsumInput && sipInput) {
+                    lumpsumInput.style.display = type === 'lumpsum' ? 'block' : 'none';
+                    sipInput.style.display = type === 'sip' ? 'block' : 'none';
+                }
+                
+                // Recalculate
+                calculateInvestment();
+                console.log('Investment type changed successfully'); // Debug log
+            } else {
+                console.error('Investment type buttons not found');
+            }
         }
 
         // Investment calculator
         function calculateInvestment() {
-            const rate = parseFloat(document.getElementById('rate').value) || 12;
-            const years = parseFloat(document.getElementById('years').value) || 10;
+            console.log('Calculating investment...'); // Debug log
             
-            let totalValue, totalInvested, totalGains;
-            
-            if (currentInvestmentType === 'lumpsum') {
-                const principal = parseFloat(document.getElementById('principal').value) || 100000;
-                totalInvested = principal;
-                totalValue = principal * Math.pow(1 + rate / 100, years);
-            } else {
-                const monthly = parseFloat(document.getElementById('monthly').value) || 5000;
-                const monthlyRate = rate / 100 / 12;
-                const months = years * 12;
-                totalInvested = monthly * months;
+            try {
+                const rateInput = document.getElementById('rate');
+                const yearsInput = document.getElementById('years');
                 
-                if (monthlyRate === 0) {
-                    totalValue = totalInvested;
-                } else {
-                    totalValue = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+                if (!rateInput || !yearsInput) {
+                    console.error('Rate or years input not found');
+                    return;
                 }
+                
+                const rate = parseFloat(rateInput.value) || 12;
+                const years = parseFloat(yearsInput.value) || 10;
+                
+                let totalValue, totalInvested, totalGains;
+                
+                if (currentInvestmentType === 'lumpsum') {
+                    const principalInput = document.getElementById('principal');
+                    if (!principalInput) {
+                        console.error('Principal input not found');
+                        return;
+                    }
+                    const principal = parseFloat(principalInput.value) || 100000;
+                    totalInvested = principal;
+                    totalValue = principal * Math.pow(1 + rate / 100, years);
+                } else {
+                    const monthlyInput = document.getElementById('monthly');
+                    if (!monthlyInput) {
+                        console.error('Monthly input not found');
+                        return;
+                    }
+                    const monthly = parseFloat(monthlyInput.value) || 5000;
+                    const monthlyRate = rate / 100 / 12;
+                    const months = years * 12;
+                    totalInvested = monthly * months;
+                    
+                    if (monthlyRate === 0) {
+                        totalValue = totalInvested;
+                    } else {
+                        totalValue = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+                    }
+                }
+                
+                totalGains = totalValue - totalInvested;
+                const roi = (totalGains / totalInvested) * 100;
+                
+                // Update display
+                const totalValueEl = document.getElementById('total-value');
+                const totalInvestedEl = document.getElementById('total-invested');
+                const totalGainsEl = document.getElementById('total-gains');
+                const roiEl = document.getElementById('roi');
+                
+                if (totalValueEl && totalInvestedEl && totalGainsEl && roiEl) {
+                    totalValueEl.textContent = formatCurrency(totalValue);
+                    totalInvestedEl.textContent = formatCurrency(totalInvested);
+                    totalGainsEl.textContent = formatCurrency(totalGains);
+                    roiEl.textContent = roi.toFixed(1) + '%';
+                    
+                    // Update AI insights
+                    updateAIInsights(rate, years, totalValue);
+                    console.log('Calculation completed successfully'); // Debug log
+                } else {
+                    console.error('Result display elements not found');
+                }
+                
+            } catch (error) {
+                console.error('Error in calculateInvestment:', error);
             }
-            
-            totalGains = totalValue - totalInvested;
-            const roi = (totalGains / totalInvested) * 100;
-            
-            // Update display
-            document.getElementById('total-value').textContent = formatCurrency(totalValue);
-            document.getElementById('total-invested').textContent = formatCurrency(totalInvested);
-            document.getElementById('total-gains').textContent = formatCurrency(totalGains);
-            document.getElementById('roi').textContent = roi.toFixed(1) + '%';
-            
-            // Update AI insights
-            updateAIInsights(rate, years, totalValue);
         }
 
         // Format currency
@@ -1354,13 +1408,25 @@ Thank you!`;
 
         // Mobile menu functions
         function toggleMobileMenu() {
+            console.log('Toggling mobile menu'); // Debug log
             const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('active');
+            if (mobileMenu) {
+                mobileMenu.classList.toggle('active');
+                console.log('Mobile menu toggled');
+            } else {
+                console.error('Mobile menu element not found');
+            }
         }
 
         function closeMobileMenu() {
+            console.log('Closing mobile menu'); // Debug log
             const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.remove('active');
+            if (mobileMenu) {
+                mobileMenu.classList.remove('active');
+                console.log('Mobile menu closed');
+            } else {
+                console.error('Mobile menu element not found');
+            }
         }
 
         // Google Sheets integration
@@ -1534,7 +1600,32 @@ Thank you!`;
 
         // Initialize calculator on page load
         document.addEventListener('DOMContentLoaded', function() {
-            calculateInvestment();
+            console.log('Page loaded, initializing...'); // Debug log
+            
+            // Test if key elements exist
+            const calculator = document.getElementById('calculator');
+            const surveyTab = document.getElementById('survey-tab');
+            const principalInput = document.getElementById('principal');
+            
+            console.log('Calculator element:', calculator ? 'Found' : 'Not found');
+            console.log('Survey tab element:', surveyTab ? 'Found' : 'Not found');
+            console.log('Principal input:', principalInput ? 'Found' : 'Not found');
+            
+            // Initialize calculator
+            try {
+                calculateInvestment();
+                console.log('Initial calculation completed');
+            } catch (error) {
+                console.error('Error in initial calculation:', error);
+            }
+            
+            // Test WhatsApp function
+            window.testWhatsApp = function() {
+                console.log('Testing WhatsApp function...');
+                saveCalculation();
+            };
+            
+            console.log('Initialization complete. Try typing: testWhatsApp() in console to test WhatsApp');
         });
 
         // Close mobile menu when clicking outside
