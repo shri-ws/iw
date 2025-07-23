@@ -2,7 +2,7 @@
 let currentInvestmentType = 'lumpsum';
 
 // Google Sheets integration URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKmhVVU_3r8RUuQI1KumZ0AyiRxqqzf78eZBC6CAIVmx0H5LW-PHjDTJLxzYyM_g/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSUM1b26H3sk4WqjIQkwfWX7HANNpx7dAnWfQ0dohmS60VcswHyGyXcMdbNjIDQQ/exec';
 
 // Tab switching functionality
 window.switchTab = function(tabName) {
