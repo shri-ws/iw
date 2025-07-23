@@ -750,7 +750,19 @@
                         </div>
                     </div>
 
+                    <!-- Calculator Actions - Moved above AI Insights and Chart -->
+                    <div class="calculator-actions">
+                        <button class="submit-btn" onclick="saveCalculation()" style="background: #25D366; padding: 15px 30px; display: inline-flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.2rem;">💬</span>
+                            Share via WhatsApp & Get Expert Callback
+                        </button>
+                        <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
+                            Share your calculation on WhatsApp and get expert investment advice within 24 hours
+                        </p>
+                    </div>
+
                     <!-- AI Insights -->
+                    <div class="ai-insights">
                     <div class="ai-insights">
                         <h3 style="margin-bottom: 1rem;">🧠 AI Investment Insights</h3>
                         <div class="insight-grid">
@@ -772,17 +784,7 @@
                     <!-- Investment Growth Chart -->
                     <div class="chart-container">
                         <h3 style="margin-bottom: 1rem;">Investment Growth Projection</h3>
-                        <canvas id="growth-chart" width="800" height="300" style="max-width: 100%; height: auto;"></canvas>
-                    </div>
-
-                    <!-- Calculator Actions -->
-                    <div class="calculator-actions">
-                        <button class="submit-btn" onclick="saveCalculation()">
-                            💾 Save Calculation & Get Expert Advice
-                        </button>
-                        <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
-                            Save your calculation and connect with our investment experts for personalized advice
-                        </p>
+                        <div id="growth-chart" width="800" height="300" style="max-width: 100%; height: auto;"></canvas>
                     </div>
                 </div>
             </div>
@@ -967,7 +969,7 @@
     </footer>
 
     <!-- WhatsApp Button -->
-    <a href="https://wa.me/+919876543210?text=Hello! I'm interested in investment advice from Investment Works. Please contact me for expert consultation." class="whatsapp-btn" target="_blank">
+    <a href="https://wa.me/+919453561588?text=Hello! I'm interested in investment advice from Investment Works. Please contact me for expert consultation." class="whatsapp-btn" target="_blank">
         💬
     </a>
 
@@ -976,7 +978,7 @@
         let currentInvestmentType = 'lumpsum';
         
         // Google Sheets integration URL - Replace with your actual Google Apps Script URL
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKmhVVU_3r8RUuQI1KumZ0AyiRxqqzf78eZBC6CAIVmx0H5LW-PHjDTJLxzYyM_g/exec';
 
         // Tab switching functionality
         function switchTab(tabName) {
@@ -1336,7 +1338,7 @@
 Thank you!`;
 
             // WhatsApp share with your business number
-            const phoneNumber = "+919453561588"; // Replace with your actual WhatsApp business number
+            const phoneNumber = "+919453561588"; // Updated phone number
             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
             
             // Store calculation data
@@ -1362,7 +1364,7 @@ Thank you!`;
         }
 
         // Google Sheets integration
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKmhVVU_3r8RUuQI1KumZ0AyiRxqqzf78eZBC6CAIVmx0H5LW-PHjDTJLxzYyM_g/exec'; // Replace with your Google Apps Script URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'; // Replace with your Google Apps Script URL
 
         // Submit data to Google Sheets
         async function submitToGoogleSheets(data) {
@@ -1483,7 +1485,7 @@ Thank you!`;
                     // Add WhatsApp notification button (optional)
                     setTimeout(() => {
                         if (confirm('📱 Would you like to send a notification to our investment team via WhatsApp for faster response?')) {
-                            const phoneNumber = "+919876543210"; // Replace with your business WhatsApp number
+                            const phoneNumber = "+919453561588"; // Updated phone number
                             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
                             window.open(whatsappURL, '_blank');
                         }
