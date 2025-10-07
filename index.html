@@ -350,5 +350,11 @@
     </a>
 
     <script src="script.js"></script>
+    <script>
+fetch('https://api.countapi.xyz/hit/investmentworks/visits')
+    .then(res => res.json())
+    .then(data => document.getElementById('count').textContent = data.value.toLocaleString())
+    .catch(() => document.getElementById('count').textContent = '---');
+</script>
 </body>
 </html>
