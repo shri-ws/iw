@@ -644,7 +644,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
+// Simple visitor counter (in-memory, resets on page reload)
+    // For persistent counter, you'd need a backend API
+    let visitorCount = Math.floor(Math.random() * 5000) + 1000; // Start with random count for demo
+    
+    function updateVisitorCount() {
+        const counterElement = document.getElementById('visitorCount');
+        counterElement.textContent = visitorCount.toLocaleString();
+    }
+    
+    function animateCounter() {
+        const counterElement = document.getElementById('visitorCount');
+        const target = visitorCount;
+        const duration = 1500;
+        const steps = 60;
+        const increment = target / steps;
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            counterElement.textContent = Math.floor(current).toLocaleString();
+        }, duration / steps);
+    }
+    
+    // Initialize counter on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        visitorCount++; // Increment for this visit
+        animateCounter();
+    });
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
