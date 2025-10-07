@@ -40,7 +40,33 @@ body {
     font-weight: bold;
     color: #059669;
 }
+.visitor-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(5, 150, 105, 0.1);
+    border-radius: 20px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+}
 
+.visitor-counter .counter-icon {
+    font-size: 1.2rem;
+}
+
+.visitor-counter .counter-text {
+    color: #059669;
+    font-weight: 500;
+}
+
+.visitor-counter .counter-number {
+    color: #047857;
+    font-weight: bold;
+    font-size: 1.1rem;
+    min-width: 60px;
+    text-align: center;
+}
 .whatsapp-btn {
     position: fixed;
     bottom: 20px;
