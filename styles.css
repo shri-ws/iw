@@ -116,26 +116,95 @@ body {
     border-bottom: 1px solid #e1e5e9;
 }
 
+/* ============================================
+   LAYOUT SHIFT FIX - Add to your styles.css
+   ============================================ */
+
+/* Fix Hero Section Layout Shift */
 .hero {
-    padding: 150px 0 100px;
-    text-align: center;
-    color: white;
+    /* Set explicit height to prevent shift */
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero .container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 3rem 1.5rem;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    /* Reserve space for the heading */
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    /* Prevent font shift */
+    font-display: swap;
 }
 
 .hero p {
-    font-size: 1.3rem;
+    /* Reserve space for paragraph */
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    line-height: 1.7;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Fix Tab Navigation Shift */
+.tab-navigation {
+    /* Prevent shift when tabs load */
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
     margin-bottom: 2rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    opacity: 0.9;
+    min-height: 50px; /* Reserve space */
+}
+
+.tab-btn {
+    /* Explicit sizing prevents shift */
+    padding: 12px 24px;
+    min-width: 180px;
+    height: 48px;
+}
+
+/* Fix Calculator Grid Shift */
+.calculator-grid {
+    display: grid;
+    gap: 2rem;
+    /* Reserve minimum height */
+    min-height: 400px;
+}
+
+/* Prevent Image Shift */
+.header img,
+.feature-icon,
+img {
+    /* Prevent layout shift during image load */
+    display: block;
+}
+
+/* Fix for External Resources (hitwebcounter) */
+footer a img {
+    /* External counter won't cause shift */
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 400px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
 }
 
 .cta-section {
