@@ -144,6 +144,7 @@ body {
     margin-bottom: 1.5rem auto;
     font-display: swap;
     contain: layout style;
+    align: center;
 }
 
 .hero p {
