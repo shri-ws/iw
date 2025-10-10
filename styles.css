@@ -117,96 +117,43 @@ body {
 }
 
 /* ============================================
-   LAYOUT SHIFT FIX - Add to your styles.css
+   AGGRESSIVE LAYOUT SHIFT FIX
    ============================================ */
 
-/* Fix Hero Section Layout Shift */
+/* Hero Section - Fixed Height */
 .hero {
-    /* Set explicit height to prevent shift */
-    min-height: 500px;
+    min-height: 600px !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 100px;
+    contain: layout;
 }
 
 .hero .container {
     width: 100%;
     max-width: 1200px;
     padding: 3rem 1.5rem;
+    min-height: 400px;
 }
 
 .hero h1 {
-    /* Reserve space for the heading */
     font-size: clamp(2rem, 5vw, 3.5rem);
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    /* Prevent font shift */
     font-display: swap;
+    contain: layout style;
 }
 
 .hero p {
-    /* Reserve space for paragraph */
     font-size: clamp(1rem, 2.5vw, 1.3rem);
     line-height: 1.7;
     max-width: 800px;
     margin: 0 auto;
+    contain: layout style;
 }
 
-/* Fix Tab Navigation Shift */
-.tab-navigation {
-    /* Prevent shift when tabs load */
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-    min-height: 50px; /* Reserve space */
-}
-
-.tab-btn {
-    /* Explicit sizing prevents shift */
-    padding: 12px 24px;
-    min-width: 180px;
-    height: 48px;
-}
-
-/* Fix Calculator Grid Shift */
-.calculator-grid {
-    display: grid;
-    gap: 2rem;
-    /* Reserve minimum height */
-    min-height: 400px;
-}
-
-/* Prevent Image Shift */
-.header img,
-.feature-icon,
-img {
-    /* Prevent layout shift during image load */
-    display: block;
-}
-
-/* Fix for External Resources (hitwebcounter) */
-footer a img {
-    /* External counter won't cause shift */
-    display: inline-block;
-    vertical-align: middle;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .hero {
-        min-height: 400px;
-    }
-    
-    .hero h1 {
-        font-size: 2rem;
-    }
-    
-    .hero p {
-        font-size: 1rem;
-    }
-}
-
+/* CTA Section - Fixed Height */
 .cta-section {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -214,9 +161,10 @@ footer a img {
     margin: -50px 20px 0;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    min-height: 900px;
 }
 
-/* Tab Navigation */
+/* Tab Navigation - Fixed Height */
 .tab-navigation {
     display: flex;
     justify-content: center;
@@ -224,6 +172,8 @@ footer a img {
     border-bottom: 2px solid #e1e5e9;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    height: 60px;
+    align-items: center;
 }
 
 .tab-btn {
@@ -238,6 +188,8 @@ footer a img {
     transition: all 0.3s;
     white-space: nowrap;
     flex-shrink: 0;
+    min-width: 200px;
+    height: 48px;
 }
 
 .tab-btn.active {
@@ -257,10 +209,11 @@ footer a img {
     display: block;
 }
 
-/* Calculator Styles */
+/* Calculator Styles - Fixed Heights */
 .calculator-container {
     max-width: 1000px;
     margin: 0 auto;
+    min-height: 800px;
 }
 
 .calculator-grid {
@@ -268,6 +221,7 @@ footer a img {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
+    min-height: 500px !important;
 }
 
 .calculator-inputs {
@@ -275,6 +229,7 @@ footer a img {
     padding: 2rem;
     border-radius: 15px;
     border: 2px solid #e1e5e9;
+    min-height: 450px;
 }
 
 .calculator-results {
@@ -283,6 +238,7 @@ footer a img {
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
+    min-height: 450px;
 }
 
 .input-group {
@@ -360,11 +316,12 @@ footer a img {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Styles */
+/* Form Styles - Fixed Height */
 .form-container {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+    min-height: 900px;
 }
 
 .form-container h2 {
@@ -458,6 +415,7 @@ input:focus, select:focus, textarea:focus {
     transform: none;
 }
 
+/* Features Section - Fixed Height */
 .features {
     padding: 100px 0;
     background: white;
@@ -474,6 +432,7 @@ input:focus, select:focus, textarea:focus {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    min-height: 400px;
 }
 
 .feature-card {
@@ -482,6 +441,7 @@ input:focus, select:focus, textarea:focus {
     border-radius: 15px;
     text-align: center;
     transition: transform 0.3s;
+    min-height: 280px;
 }
 
 .feature-card:hover {
@@ -557,6 +517,23 @@ input:focus, select:focus, textarea:focus {
     border-top: 2px solid #e1e5e9;
 }
 
+/* Prevent ALL Image Shifts */
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.header img {
+    width: 80px !important;
+    height: 80px !important;
+}
+
+footer a img {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
     .logo {
@@ -572,7 +549,12 @@ input:focus, select:focus, textarea:focus {
     }
 
     .hero {
+        min-height: 500px !important;
         padding: 120px 0 80px;
+    }
+
+    .hero .container {
+        min-height: 350px;
     }
 
     .hero h1 {
@@ -589,6 +571,7 @@ input:focus, select:focus, textarea:focus {
         margin: -30px 10px 0;
         padding: 40px 15px;
         border-radius: 15px;
+        min-height: 1100px;
     }
 
     .form-container h2 {
@@ -607,6 +590,7 @@ input:focus, select:focus, textarea:focus {
     .calculator-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        min-height: 650px !important;
     }
 
     .calculator-inputs,
@@ -616,11 +600,13 @@ input:focus, select:focus, textarea:focus {
 
     .tab-navigation {
         margin-bottom: 1.5rem;
+        height: 55px;
     }
 
     .tab-btn {
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
+        min-width: 160px;
     }
 
     .checkbox-group {
@@ -639,6 +625,7 @@ input:focus, select:focus, textarea:focus {
 
     .feature-card {
         padding: 1.5rem;
+        min-height: 250px;
     }
 
     .result-value {
@@ -657,6 +644,10 @@ input:focus, select:focus, textarea:focus {
 @media (max-width: 480px) {
     .container {
         padding: 0 15px;
+    }
+
+    .hero {
+        min-height: 450px !important;
     }
 
     .hero h1 {
@@ -679,6 +670,7 @@ input:focus, select:focus, textarea:focus {
     .tab-btn {
         padding: 0.6rem 0.8rem;
         font-size: 0.9rem;
+        min-width: 140px;
     }
 
     .features h2 {
@@ -687,6 +679,10 @@ input:focus, select:focus, textarea:focus {
 
     .ai-insights {
         padding: 1.5rem;
+    }
+
+    .cta-section {
+        min-height: 1200px;
     }
 }
 
@@ -705,39 +701,5 @@ input:focus, select:focus, textarea:focus {
 
     .submit-btn:active {
         transform: scale(0.98);
-    }
-}/* Layout Shift Fix */
-.hero {
-    min-height: 500px;
-}
-
-.hero h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-}
-
-.hero p {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-    line-height: 1.7;
-}
-
-.calculator-grid {
-    min-height: 450px;
-}
-
-.tab-navigation {
-    min-height: 50px;
-}
-
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-}
-
-@media (max-width: 768px) {
-    .hero {
-        min-height: 400px;
     }
 }
