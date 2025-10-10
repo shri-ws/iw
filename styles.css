@@ -143,8 +143,8 @@ body {
     line-height: 1.2;
     margin-bottom: 1.5rem auto;
     font-display: swap;
+    margin: 0 auto;
     contain: layout style;
-    align-items: center;
 }
 
 .hero p {
