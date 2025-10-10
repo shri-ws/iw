@@ -1,3 +1,4 @@
 User-agent: *
-   Allow: /
+Allow: /
+Crawl-delay: 1
    Sitemap: https://investmentworks.in/sitemap.xml
