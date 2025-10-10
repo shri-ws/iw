@@ -706,4 +706,38 @@ input:focus, select:focus, textarea:focus {
     .submit-btn:active {
         transform: scale(0.98);
     }
+}/* Layout Shift Fix */
+.hero {
+    min-height: 500px;
+}
+
+.hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.hero p {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    line-height: 1.7;
+}
+
+.calculator-grid {
+    min-height: 450px;
+}
+
+.tab-navigation {
+    min-height: 50px;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 400px;
+    }
 }
