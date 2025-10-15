@@ -1,3 +1,1 @@
-# Documentation
-
-API and system documentation.
+# Docs
