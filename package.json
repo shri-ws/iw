@@ -1,0 +1,14 @@
+{
+  "name": "investmentworks",
+  "version": "1.0.0",
+  "description": "InvestmentWorks - Mutual Fund Platform",
+  "scripts": {
+    "install-all": "cd app/client && npm install && cd ../server && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd app/server && npm run dev",
+    "client": "cd app/client && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
