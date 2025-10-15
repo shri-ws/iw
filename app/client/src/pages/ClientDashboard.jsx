@@ -1,47 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp, Plus, ArrowDownToLine, Home, DollarSign, PieChart, User } from 'lucide-react';
+import { portfolioAPI, transactionAPI, schemeAPI } from '../services/api';
 
 const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState('home');
+  const [portfolioData, setPortfolioData] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [schemes, setSchemes] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  // Mock data
-  const portfolioValue = 245000;
-  const investedAmount = 200000;
-  const todayGain = 2500;
-  const totalGain = 45000;
-  const gainPercentage = 22.5;
-  
-  const recentTransactions = [
-    { id: 1, type: 'SIP', scheme: 'HDFC Top 100 Fund', amount: 5000, date: '15 Oct 2025', status: 'completed' },
-    { id: 2, type: 'Lumpsum', scheme: 'SBI Bluechip Fund', amount: 25000, date: '10 Oct 2025', status: 'completed' },
-    { id: 3, type: 'SIP', scheme: 'Axis Midcap Fund', amount: 3000, date: '5 Oct 2025', status: 'completed' }
-  ];
-  
-  const holdings = [
-    { name: 'HDFC Top 100 Fund', value: 85000, invested: 70000, returns: 21.4, color: 'bg-blue-500' },
-    { name: 'SBI Bluechip Fund', value: 95000, invested: 80000, returns: 18.8, color: 'bg-purple-500' },
-    { name: 'Axis Midcap Fund', value: 65000, invested: 50000, returns: 30.0, color: 'bg-green-500' }
-  ];
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch portfolio data (using clientId = 1 for demo)
+      const portfolioRes = await portfolioAPI.getPortfolio(1);
+      setPortfolioData(portfolioRes.data.data);
+      
+      // Fetch transactions
+      const transactionsRes = await transactionAPI.getTransactions(1);
+      setTransactions(transactionsRes.data.data);
+      
+      // Fetch schemes
+      const schemesRes = await schemeAPI.getAllSchemes();
+      setSchemes(schemesRes.data.data);
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your portfolio...</p>
+        </div>
+      </div>
+    );
+  }
 
   const HomeScreen = () => (
     <div className="space-y-6">
       {/* Portfolio Value Card */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-6 text-white shadow-lg">
         <p className="text-blue-100 text-sm mb-1">Total Investment Value</p>
-        <h1 className="text-4xl font-bold mb-4">₹{portfolioValue.toLocaleString('en-IN')}</h1>
+        <h1 className="text-4xl font-bold mb-4">
+          ₹{portfolioData?.currentValue?.toLocaleString('en-IN') || '0'}
+        </h1>
         
         <div className="flex items-center justify-between pt-4 border-t border-blue-400">
           <div>
             <p className="text-blue-100 text-xs mb-1">Today's Change</p>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-green-300" />
-              <span className="text-lg font-semibold text-green-300">+₹{todayGain.toLocaleString('en-IN')}</span>
+              <span className="text-lg font-semibold text-green-300">
+                +₹{portfolioData?.todayGain?.toLocaleString('en-IN') || '0'}
+              </span>
             </div>
           </div>
           <div className="text-right">
             <p className="text-blue-100 text-xs mb-1">Total Returns</p>
             <div className="flex items-center gap-2 justify-end">
-              <span className="text-lg font-semibold text-green-300">+{gainPercentage}%</span>
+              <span className="text-lg font-semibold text-green-300">
+                +{portfolioData?.returnsPercentage || '0'}%
+              </span>
             </div>
           </div>
         </div>
@@ -78,11 +109,11 @@ const ClientDashboard = () => {
       <div>
         <h2 className="text-lg font-semibold mb-3 text-gray-800">Recent Activity</h2>
         <div className="space-y-2">
-          {recentTransactions.map(txn => (
+          {transactions.slice(0, 3).map(txn => (
             <div key={txn.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="font-medium text-gray-800 text-sm">{txn.scheme}</p>
+                  <p className="font-medium text-gray-800 text-sm">{txn.schemeName}</p>
                   <p className="text-xs text-gray-500 mt-1">{txn.date}</p>
                 </div>
                 <div className="text-right">
@@ -133,18 +164,18 @@ const ClientDashboard = () => {
         </button>
       </div>
 
-      {/* Popular Funds */}
+      {/* Popular Funds - Real Data */}
       <div>
         <h2 className="text-lg font-semibold mb-3 text-gray-800">Popular Funds</h2>
         <div className="space-y-2">
-          {['HDFC Top 100 Fund', 'SBI Bluechip Fund', 'Axis Midcap Fund'].map((fund, idx) => (
-            <div key={idx} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+          {schemes.slice(0, 3).map((scheme) => (
+            <div key={scheme.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-800 text-sm">{fund}</p>
-                <p className="text-xs text-gray-500 mt-1">Equity • High Risk</p>
+                <p className="font-medium text-gray-800 text-sm">{scheme.schemeName}</p>
+                <p className="text-xs text-gray-500 mt-1">{scheme.category} • {scheme.subCategory}</p>
               </div>
               <div className="text-right">
-                <p className="text-green-600 font-semibold text-sm">+{(15 + idx * 5).toFixed(1)}%</p>
+                <p className="text-green-600 font-semibold text-sm">+{scheme.returns3Y}%</p>
                 <p className="text-xs text-gray-500">3Y Returns</p>
               </div>
             </div>
@@ -165,28 +196,32 @@ const ClientDashboard = () => {
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
           <p className="text-gray-600 text-xs mb-1">Invested</p>
-          <p className="text-xl font-bold text-gray-800">₹{investedAmount.toLocaleString('en-IN')}</p>
+          <p className="text-xl font-bold text-gray-800">
+            ₹{portfolioData?.totalInvested?.toLocaleString('en-IN') || '0'}
+          </p>
         </div>
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
           <p className="text-gray-600 text-xs mb-1">Returns</p>
-          <p className="text-xl font-bold text-green-600">+₹{totalGain.toLocaleString('en-IN')}</p>
+          <p className="text-xl font-bold text-green-600">
+            +₹{portfolioData?.totalReturns?.toLocaleString('en-IN') || '0'}
+          </p>
         </div>
       </div>
 
-      {/* Holdings */}
+      {/* Holdings - Real Data */}
       <div>
         <h2 className="text-lg font-semibold mb-3 text-gray-800">Your Funds</h2>
         <div className="space-y-3">
-          {holdings.map((holding, idx) => (
+          {portfolioData?.holdings?.map((holding, idx) => (
             <div key={idx} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-3 h-3 rounded-full ${holding.color}`}></div>
-                <p className="font-medium text-gray-800 text-sm flex-1">{holding.name}</p>
+                <div className={`w-3 h-3 rounded-full ${['bg-blue-500', 'bg-purple-500', 'bg-green-500'][idx % 3]}`}></div>
+                <p className="font-medium text-gray-800 text-sm flex-1">{holding.schemeName}</p>
               </div>
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Current Value</p>
-                  <p className="text-lg font-bold text-gray-800">₹{holding.value.toLocaleString('en-IN')}</p>
+                  <p className="text-lg font-bold text-gray-800">₹{holding.currentValue.toLocaleString('en-IN')}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-gray-500 mb-1">Returns</p>
